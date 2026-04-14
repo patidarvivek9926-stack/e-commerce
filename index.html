@@ -1,25 +1,34 @@
-<!DOCTYPE html>
+from pathlib import Path
+
+source = Path('/mnt/data/Pasted text(7).txt').read_text(encoding='utf-8')
+script_start = source.index("<script>")
+script_and_after = source[script_start:]
+
+html = """<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BUYZAAR | Everyday Fashion Store</title>
+  <title>BUYZAAR | Premium Fashion Store</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #f5f7fb;
-      --surface: #ffffff;
-      --surface-2: #f0f4ff;
-      --text: #111827;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --primary: #2874f0;
-      --primary-dark: #1d5fcc;
-      --accent: #fb641b;
-      --success: #388e3c;
-      --shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+      --bg: #07111f;
+      --bg-2: #0d1b2f;
+      --surface: rgba(255, 255, 255, 0.08);
+      --surface-strong: rgba(255, 255, 255, 0.14);
+      --surface-soft: rgba(255, 255, 255, 0.05);
+      --text: #f8fbff;
+      --muted: #bfd0ea;
+      --border: rgba(255, 255, 255, 0.14);
+      --primary: #7c9cff;
+      --primary-dark: #5d7df0;
+      --accent: #ff8c5a;
+      --success: #55e38f;
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
+      --glass: blur(18px);
     }
 
     * {
@@ -34,9 +43,26 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: var(--bg);
       color: var(--text);
       min-height: 100vh;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at top left, rgba(124, 156, 255, 0.20), transparent 28%),
+        radial-gradient(circle at top right, rgba(255, 140, 90, 0.14), transparent 24%),
+        radial-gradient(circle at bottom center, rgba(56, 189, 248, 0.12), transparent 30%),
+        linear-gradient(135deg, var(--bg), var(--bg-2));
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 34px 34px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent 90%);
     }
 
     a { text-decoration: none; color: inherit; }
@@ -49,8 +75,10 @@
     }
 
     .topbar {
-      background: #ffffff;
+      background: rgba(7, 17, 31, 0.55);
       border-bottom: 1px solid var(--border);
+      backdrop-filter: var(--glass);
+      -webkit-backdrop-filter: var(--glass);
       position: sticky;
       top: 0;
       z-index: 100;
@@ -67,21 +95,22 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       font-weight: 800;
       font-size: 1.2rem;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.5px;
     }
 
     .brand-logo {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
       display: grid;
       place-items: center;
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--primary), var(--accent));
       color: white;
       font-weight: 800;
+      box-shadow: 0 14px 28px rgba(124, 156, 255, 0.28);
     }
 
     .nav-right {
@@ -115,15 +144,18 @@
     }
 
     .search {
-      width: min(520px, 100%);
-      background: #f1f5ff;
-      border: 1px solid #dbe4ff;
-      border-radius: 12px;
-      padding: 12px 14px;
+      width: min(560px, 100%);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 13px 16px;
       display: flex;
       align-items: center;
       gap: 10px;
       color: var(--muted);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
     }
 
     .search input {
@@ -132,7 +164,11 @@
       outline: none;
       background: transparent;
       color: var(--text);
-      font-size: 0.95rem;
+      font-size: 0.96rem;
+    }
+
+    .search input::placeholder {
+      color: #b8c6de;
     }
 
     .menu {
@@ -142,7 +178,7 @@
       list-style: none;
       font-size: 0.95rem;
       font-weight: 600;
-      color: #374151;
+      color: #d7e4ff;
     }
 
     .menu > li {
@@ -154,30 +190,32 @@
       align-items: center;
       gap: 6px;
       padding: 10px 14px;
-      border-radius: 10px;
-      transition: 0.2s ease;
+      border-radius: 12px;
+      transition: 0.25s ease;
     }
 
     .menu-link:hover,
     .menu > li:hover > .menu-link {
-      color: var(--primary);
-      background: #f4f7ff;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
     }
 
     .dropdown {
       position: absolute;
       top: calc(100% + 10px);
       left: 0;
-      min-width: 210px;
-      background: white;
+      min-width: 220px;
+      background: rgba(9, 18, 32, 0.82);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      box-shadow: 0 18px 30px rgba(15, 23, 42, 0.08);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       padding: 10px;
       opacity: 0;
       visibility: hidden;
       transform: translateY(10px);
-      transition: 0.2s ease;
+      transition: 0.25s ease;
       z-index: 20;
     }
 
@@ -190,37 +228,63 @@
 
     .dropdown a {
       display: block;
-      padding: 10px 12px;
-      border-radius: 10px;
-      color: #374151;
+      padding: 11px 12px;
+      border-radius: 12px;
+      color: #d7e4ff;
       font-size: 0.92rem;
+      transition: 0.2s ease;
     }
 
     .dropdown a:hover {
-      background: #f4f7ff;
-      color: var(--primary);
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
     }
 
     .hero {
-      padding: 22px 0 18px;
+      padding: 28px 0 20px;
     }
 
     .hero-wrap {
       display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
+      grid-template-columns: 1.08fr 0.92fr;
       gap: 18px;
     }
 
-    .hero-left {
-      background: linear-gradient(135deg, #e8f0ff, #ffffff);
+    .hero-left,
+    .hero-right,
+    .about-card,
+    .card,
+    .highlight,
+    .page-btn,
+    .catalog-bar {
+      background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 34px;
+      backdrop-filter: var(--glass);
+      -webkit-backdrop-filter: var(--glass);
       box-shadow: var(--shadow);
+    }
+
+    .hero-left {
+      border-radius: 28px;
+      padding: 36px;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      min-height: 300px;
+      min-height: 320px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-left::before {
+      content: "";
+      position: absolute;
+      right: -80px;
+      top: -80px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(124, 156, 255, 0.22), transparent 70%);
+      pointer-events: none;
     }
 
     .hero-badge {
@@ -228,8 +292,9 @@
       align-items: center;
       gap: 8px;
       width: fit-content;
-      background: #e7f1ff;
-      color: var(--primary);
+      background: rgba(124, 156, 255, 0.12);
+      color: #dfe8ff;
+      border: 1px solid rgba(124, 156, 255, 0.24);
       border-radius: 999px;
       padding: 8px 14px;
       font-size: 0.86rem;
@@ -238,54 +303,69 @@
     }
 
     .hero h1 {
-      font-size: clamp(2rem, 4vw, 3.6rem);
-      line-height: 1.1;
-      margin-bottom: 12px;
+      font-size: clamp(2.1rem, 4vw, 3.8rem);
+      line-height: 1.06;
+      margin-bottom: 14px;
+      letter-spacing: -0.03em;
     }
 
     .hero h1 span {
-      color: var(--primary);
+      background: linear-gradient(135deg, #8ba9ff, #ffb18a);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
 
     .hero p {
       color: var(--muted);
-      line-height: 1.7;
+      line-height: 1.8;
       font-size: 1rem;
-      max-width: 620px;
+      max-width: 640px;
     }
 
     .hero-highlights {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 12px;
-      margin-top: 22px;
+      margin-top: 24px;
     }
 
     .highlight {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
+      border-radius: 18px;
+      padding: 16px;
+      transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+    }
+
+    .highlight:hover {
+      transform: translateY(-5px);
+      border-color: rgba(124, 156, 255, 0.28);
+      background: var(--surface-strong);
     }
 
     .highlight strong {
       display: block;
-      color: var(--primary);
+      color: #ffffff;
       margin-bottom: 4px;
+      font-size: 1rem;
     }
 
     .hero-right {
-      border-radius: 18px;
+      border-radius: 28px;
       overflow: hidden;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      background: white;
+      position: relative;
+      min-height: 320px;
     }
 
     .hero-right img {
       height: 100%;
-      min-height: 300px;
+      min-height: 320px;
       object-fit: cover;
+      transform: scale(1.01);
+      transition: transform 0.5s ease;
+    }
+
+    .hero-right:hover img {
+      transform: scale(1.06);
     }
 
     .section-head {
@@ -293,40 +373,50 @@
       justify-content: space-between;
       align-items: center;
       gap: 14px;
-      margin: 14px 0 16px;
+      margin: 16px 0 16px;
       flex-wrap: wrap;
     }
 
     .section-head h2 {
-      font-size: 1.55rem;
+      font-size: 1.7rem;
+      letter-spacing: -0.02em;
     }
 
     .section-head p {
       color: var(--muted);
     }
 
-    .filters {
+    .catalog-bar {
       display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      border-radius: 20px;
+      padding: 14px 16px;
       margin-bottom: 18px;
+      flex-wrap: wrap;
     }
 
-    .filter-btn {
-      padding: 10px 16px;
-      border-radius: 999px;
-      background: white;
-      border: 1px solid var(--border);
-      color: #374151;
+    .results-text {
+      color: var(--muted);
       font-weight: 600;
-      transition: 0.2s ease;
     }
 
-    .filter-btn.active,
-    .filter-btn:hover {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: white;
+    .page-size {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .page-size select {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      outline: none;
     }
 
     .products {
@@ -337,72 +427,87 @@
     }
 
     .card {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: 22px;
       overflow: hidden;
-      box-shadow: var(--shadow);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
       display: flex;
       flex-direction: column;
+      position: relative;
+      isolation: isolate;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), transparent 32%);
+      pointer-events: none;
+      z-index: 0;
     }
 
     .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 14px 28px rgba(15, 23, 42, 0.1);
+      transform: translateY(-8px) scale(1.01);
+      border-color: rgba(124, 156, 255, 0.28);
+      box-shadow: 0 24px 55px rgba(0, 0, 0, 0.34);
     }
 
     .card-media {
       position: relative;
-      height: 240px;
-      background: #f8fafc;
+      height: 250px;
+      background: rgba(255, 255, 255, 0.04);
       overflow: hidden;
+      z-index: 1;
     }
 
     .card-media img {
       height: 100%;
       object-fit: cover;
-      transition: transform 0.25s ease;
+      transition: transform 0.35s ease;
     }
 
     .card:hover .card-media img {
-      transform: scale(1.04);
+      transform: scale(1.08);
     }
 
     .tag {
       position: absolute;
-      left: 12px;
-      top: 12px;
-      background: rgba(255,255,255,0.92);
-      color: var(--primary);
-      border: 1px solid #dbe4ff;
+      left: 14px;
+      top: 14px;
+      background: rgba(7, 17, 31, 0.68);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.16);
       border-radius: 999px;
-      padding: 7px 10px;
+      padding: 7px 11px;
       font-size: 0.74rem;
       font-weight: 800;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
 
     .card-body {
-      padding: 16px;
+      padding: 18px;
       display: flex;
       flex-direction: column;
       gap: 10px;
       flex: 1;
+      position: relative;
+      z-index: 1;
     }
 
     .brand-line {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 700;
-      color: var(--primary);
+      color: #9bb3ff;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.12em;
     }
 
     .card-title {
-      font-size: 0.98rem;
+      font-size: 1rem;
       font-weight: 700;
-      line-height: 1.45;
-      min-height: 44px;
+      line-height: 1.5;
+      min-height: 48px;
+      color: #ffffff;
     }
 
     .meta {
@@ -428,15 +533,15 @@
     }
 
     .price {
-      font-size: 1.18rem;
+      font-size: 1.2rem;
       font-weight: 800;
-      color: var(--text);
+      color: #ffffff;
     }
 
     .old-price {
-      color: #9ca3af;
+      color: #9fb0cb;
       text-decoration: line-through;
-      font-size: 0.9rem;
+      font-size: 0.92rem;
     }
 
     .discount {
@@ -447,19 +552,20 @@
 
     .add-btn {
       margin-top: auto;
-      padding: 13px 14px;
-      border-radius: 12px;
-      background: var(--accent);
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), #ff6b7d);
       color: white;
       font-weight: 800;
-      transition: background 0.2s ease;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+      box-shadow: 0 14px 30px rgba(255, 121, 97, 0.24);
     }
 
     .add-btn:hover {
-      background: #e85b18;
+      transform: translateY(-2px);
+      filter: brightness(1.05);
+      box-shadow: 0 18px 34px rgba(255, 121, 97, 0.34);
     }
-
-
 
     .pagination {
       display: flex;
@@ -474,17 +580,21 @@
       min-width: 44px;
       height: 44px;
       padding: 0 16px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: white;
+      border-radius: 14px;
       color: var(--text);
       font-weight: 700;
+      transition: 0.2s ease;
+    }
+
+    .page-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      background: var(--surface-strong);
     }
 
     .page-btn.active {
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: white;
-      border-color: var(--primary);
+      border-color: transparent;
     }
 
     .page-btn:disabled {
@@ -500,21 +610,25 @@
     }
 
     .about-card {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: var(--shadow);
+      border-radius: 24px;
+      padding: 26px;
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+
+    .about-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(124, 156, 255, 0.22);
     }
 
     .about-card h3 {
       margin-bottom: 12px;
-      font-size: 1.2rem;
+      font-size: 1.28rem;
+      color: #ffffff;
     }
 
     .about-card p {
       color: var(--muted);
-      line-height: 1.75;
+      line-height: 1.8;
     }
 
     .features {
@@ -525,19 +639,26 @@
     }
 
     .feature {
-      background: #f9fbff;
+      background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
+      border-radius: 16px;
+      padding: 15px;
       color: var(--muted);
-      line-height: 1.6;
+      line-height: 1.65;
       font-size: 0.92rem;
+      transition: transform 0.22s ease, background 0.22s ease, border-color 0.22s ease;
+    }
+
+    .feature:hover {
+      transform: translateY(-3px);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(124, 156, 255, 0.22);
     }
 
     .feature strong {
       display: block;
-      color: var(--text);
-      margin-bottom: 4px;
+      color: #ffffff;
+      margin-bottom: 5px;
     }
 
     .toast {
@@ -545,15 +666,18 @@
       left: 50%;
       bottom: 24px;
       transform: translateX(-50%) translateY(25px);
-      background: #111827;
+      background: rgba(8, 15, 29, 0.88);
       color: white;
       padding: 12px 16px;
-      border-radius: 10px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
       font-weight: 600;
       opacity: 0;
       visibility: hidden;
       transition: 0.2s ease;
       z-index: 200;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
     }
 
     .toast.show {
@@ -563,11 +687,13 @@
     }
 
     footer {
-      padding: 22px 0 34px;
+      padding: 24px 0 36px;
       text-align: center;
       color: var(--muted);
       border-top: 1px solid var(--border);
-      background: white;
+      background: rgba(7, 17, 31, 0.38);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
 
     @media (max-width: 1100px) {
@@ -709,26 +835,26 @@
     <section class="hero" id="home">
       <div class="container hero-wrap">
         <div class="hero-left">
-          <div class="hero-badge">Top picks • Daily deals • Easy shopping</div>
-          <h1>Shop trending <span>fashion essentials</span> with a cleaner look.</h1>
+          <div class="hero-badge">Premium picks • Trend-first styles • Fast browsing</div>
+          <h1>Discover standout <span>fashion essentials</span> with a premium shopping feel.</h1>
           <p>
-            Discover a wide range of trending fashion products across men, women, and kids, all in one place. 
-This platform is designed to help you explore top deals, compare options quickly, and shop smarter 
-with a clean and easy-to-use interface inspired by modern online
+            Discover trending fashion for men, women, and kids in one polished storefront. BUYZAAR is designed to feel
+            modern, smooth, and visually premium, making it easier to explore deals, compare products quickly, and move
+            straight from browsing to purchase.
           </p>
 
           <div class="hero-highlights">
             <div class="highlight">
               <strong id="heroProductCount">6000+ Products</strong>
-              More variety across men, women and kids.
+              Explore a larger collection across multiple categories.
             </div>
             <div class="highlight">
-              <strong>Minimal UI</strong>
-              Clean cards, soft colors and easier browsing.
+              <strong>Premium UI</strong>
+              Glassmorphism, better spacing and richer hover interactions.
             </div>
             <div class="highlight">
               <strong>Quick Filters</strong>
-              Jump between popular categories instantly.
+              Jump to fashion, accessories and fragrances in seconds.
             </div>
           </div>
         </div>
@@ -743,7 +869,7 @@ with a clean and easy-to-use interface inspired by modern online
       <div class="section-head">
         <div>
           <h2>Featured products</h2>
-          <p>Browse a simple store layout with fashion, shoes, watches and accessories.</p>
+          <p>Browse premium cards with clean pricing, better visuals and faster purchase action.</p>
         </div>
       </div>
 
@@ -768,25 +894,26 @@ with a clean and easy-to-use interface inspired by modern online
       <div class="about-card">
         <h3>About this layout</h3>
         <p>
-          This version is made to feel more practical and marketplace-style instead of premium luxury styling.
-          The focus is on cleaner spacing, simpler colors, and better product visibility.
+          This version is designed to feel more premium, interactive and visually refined while keeping the browsing
+          experience simple. The glass effect, smooth hover motion and cleaner product presentation help the storefront
+          look more modern without making it harder to use.
         </p>
         <div class="features">
           <div class="feature">
-            <strong>Minimal design</strong>
-            Light background, simpler navbar and cleaner product cards.
+            <strong>Premium glass style</strong>
+            Soft transparency, layered cards and modern depth create a richer first impression.
           </div>
           <div class="feature">
-            <strong>Category dropdowns</strong>
-            Men, women and kids now sit at the top with simple dropdown navigation.
+            <strong>Interactive hover feel</strong>
+            Product cards, feature boxes and buttons all respond smoothly for a more polished UI.
           </div>
           <div class="feature">
-            <strong>Search included</strong>
-            Search products by product name, brand or category.
+            <strong>Better product focus</strong>
+            Cleaner typography, stronger contrast and improved spacing make products easier to scan.
           </div>
           <div class="feature">
-            <strong>Easy to expand</strong>
-            You can later connect product pages, backend, checkout or login.
+            <strong>Still easy to use</strong>
+            The layout stays simple enough for fast browsing on desktop and mobile screens.
           </div>
         </div>
       </div>
@@ -823,357 +950,11 @@ with a clean and easy-to-use interface inspired by modern online
   <div class="toast" id="toast"></div>
 
   <footer>
-    <div class="container">© 2026 BUYZAAR — Minimal fashion store demo.</div>
+    <div class="container">© 2026 BUYZAAR — Premium fashion store experience.</div>
   </footer>
 
-  <script>
-    const grid = document.getElementById('productGrid');
-    const menuFilterLinks = document.querySelectorAll('.dropdown a[data-filter]');
-    const searchInput = document.getElementById('searchInput');
-    const toast = document.getElementById('toast');
-    const resultsText = document.getElementById('resultsText');
-    const pagination = document.getElementById('pagination');
-    const pageSizeSelect = document.getElementById('pageSizeSelect');
-    const heroProductCount = document.getElementById('heroProductCount');
+""" + script_and_after
 
-    const catalogConfig = {
-      men: {
-        clothing: {
-          brands: ['Mufti', 'Levi\'s', 'Roadster', 'Jack & Jones', 'U.S. Polo Assn.', 'H&M'],
-          items: ['Casual Shirt', 'Slim Fit Jeans', 'Oversized T-Shirt', 'Bomber Jacket', 'Cotton Hoodie', 'Polo T-Shirt'],
-          tags: ['Best Seller', 'Trending', 'Popular', 'New', 'Budget', 'Daily Wear'],
-          images: [
-            'https://images.unsplash.com/photo-1603252109303-2751441dd157?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1523398002811-999ca8dec234?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=900&q=80'
-          ],
-          price: [799, 3499]
-        },
-        accessories: {
-          brands: ['Tommy Hilfiger', 'Ray-Ban', 'Wildcraft', 'Fossil', 'Mast & Harbour', 'Allen Solly'],
-          items: ['Leather Wallet', 'Classic Sunglasses', 'Travel Backpack', 'Canvas Belt', 'Messenger Bag', 'Cap Set'],
-          tags: ['Premium', 'Travel', 'Popular', 'Value', 'Top Pick', 'New'],
-          images: [
-            'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=900&q=80'
-          ],
-          price: [699, 6499]
-        },
-        fragrances: {
-          brands: ['The Man Company', 'Beardo', 'Denver', 'Villain', 'Park Avenue', 'Ajmal'],
-          items: ['Fresh Perfume', 'Body Spray', 'Oud Fragrance', 'Aqua Cologne', 'Daily Deo', 'Night Scent'],
-          tags: ['Fresh', 'Hot', 'Popular', 'Long Lasting', 'Deal', 'New'],
-          images: [
-            'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1616604847462-8580be8f4dd7?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1615634260167-c8cdede054de?auto=format&fit=crop&w=900&q=80'
-          ],
-          price: [299, 2999]
-        }
-      },
-      women: {
-        clothing: {
-          brands: ['Zara', 'H&M', 'Biba', 'ONLY', 'Vero Moda', 'Global Desi'],
-          items: ['Printed Kurta Set', 'Midi Dress', 'Structured Blazer', 'Ribbed Top', 'Flared Jeans', 'Co-ord Set'],
-          tags: ['Elegant', 'Top Pick', 'Trending', 'Festive', 'Casual', 'New'],
-          images: [
-            'https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1581044777550-4cfa60707c03?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=900&q=80'
-          ],
-          price: [899, 4899]
-        },
-        accessories: {
-          brands: ['Lavie', 'Michael Kors', 'Baggit', 'Caprese', 'Accessorize', 'Aldo'],
-          items: ['Satchel Handbag', 'Tote Bag', 'Statement Earrings', 'Shoulder Bag', 'Sling Purse', 'Watch Strap Set'],
-          tags: ['Premium', 'Daily Use', 'Elegant', 'Popular', 'Style', 'New'],
-          images: [
-            'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1617038220319-276d3cfab638?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80'
-          ],
-          price: [499, 8999]
-        },
-        fragrances: {
-          brands: ['Bella Vita', 'Plum', 'Skinn', 'Engage', 'Yardley', 'Nykaa'],
-          items: ['Floral Mist', 'Rose Perfume', 'Vanilla Body Spray', 'Elegant Fragrance', 'Daily Mist', 'Night Bloom'],
-          tags: ['Fresh', 'Popular', 'Elegant', 'Top Pick', 'Deal', 'New'],
-          images: [
-            'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1616604847462-8580be8f4dd7?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1615634260167-c8cdede054de?auto=format&fit=crop&w=900&q=80'
-          ],
-          price: [349, 2799]
-        }
-      },
-      kids: {
-        clothing: {
-          brands: ['Allen Solly Junior', 'Mini Klub', 'Hopscotch', 'U.S. Polo Assn.', 'Pantaloons Junior', 'Peppermint'],
-          items: ['Checked Shirt', 'Printed Frock', 'Cotton Hoodie', 'Jogger Set', 'Denim Shorts', 'Festive Kurta'],
-          tags: ['Kids', 'Cute', 'New', 'Popular', 'Daily Wear', 'Gift'],
-          images: [
-            'https://images.unsplash.com/photo-1519238359922-989348752efb?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1519238359922-989348752efb?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=900&q=80'
-          ],
-          price: [399, 2299]
-        },
-        accessories: {
-          brands: ['Disney', 'Barbie', 'Hamleys', 'Chicco', 'Babyhug', 'Minnie'],
-          items: ['Hair Accessories Set', 'School Backpack', 'Cute Cap', 'Lunch Bag', 'Kids Watch', 'Play Bag'],
-          tags: ['Cute', 'Gift', 'School', 'Popular', 'New', 'Soft'],
-          images: [
-            'https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?auto=format&fit=crop&w=900&q=80'
-          ],
-          price: [249, 1999]
-        },
-        fragrances: {
-          brands: ['Mamaearth', 'Chicco', 'Baby Dove', 'Johnson\'s', 'Mee Mee', 'The Moms Co.'],
-          items: ['Baby Cologne', 'Fresh Spray', 'Gentle Mist', 'Soft Splash', 'Baby Body Mist', 'Mild Fragrance'],
-          tags: ['Gentle', 'Soft', 'Mild', 'Popular', 'New', 'Daily'],
-          images: [
-            'https://images.unsplash.com/photo-1615634260167-c8cdede054de?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1616604847462-8580be8f4dd7?auto=format&fit=crop&w=900&q=80',
-            'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=900&q=80'
-          ],
-          price: [199, 999]
-        }
-      }
-    };
-
-    const colorWords = ['Black', 'Blue', 'White', 'Olive', 'Grey', 'Maroon', 'Navy', 'Beige', 'Pink', 'Green'];
-    const styleWords = ['Classic', 'Modern', 'Urban', 'Relaxed', 'Signature', 'Premium', 'Smart', 'Everyday', 'Comfort', 'Elite'];
-
-    function createCatalog(total = 6000) {
-      const output = [];
-      let id = 1;
-      const categoryOrder = ['men', 'women', 'kids'];
-      const typeOrder = ['clothing', 'accessories', 'fragrances'];
-
-      while (output.length < total) {
-        categoryOrder.forEach((category, categoryIndex) => {
-          typeOrder.forEach((type, typeIndex) => {
-            if (output.length >= total) return;
-            const config = catalogConfig[category][type];
-            const loopIndex = output.length;
-            const brand = config.brands[loopIndex % config.brands.length];
-            const item = config.items[(loopIndex + typeIndex) % config.items.length];
-            const color = colorWords[(loopIndex + categoryIndex) % colorWords.length];
-            const style = styleWords[(loopIndex + typeIndex + categoryIndex) % styleWords.length];
-            const min = config.price[0];
-            const max = config.price[1];
-            const spread = max - min;
-            const price = min + ((loopIndex * 137) % (spread || 1));
-            const oldPrice = price + Math.max(100, Math.round(price * (0.18 + ((loopIndex % 12) * 0.01))));
-            const rating = (4 + ((loopIndex % 9) * 0.1)).toFixed(1);
-            const subtype = `${category}-${type}`;
-
-            output.push({
-              id: id++,
-              name: `${brand} ${style} ${color} ${item}`,
-              brand,
-              category,
-              type: subtype,
-              price,
-              oldPrice,
-              rating,
-              tag: config.tags[(loopIndex + categoryIndex) % config.tags.length],
-              img: config.images[(loopIndex + typeIndex) % config.images.length]
-            });
-          });
-        });
-      }
-
-      return output.slice(0, total);
-    }
-
-    const products = createCatalog(6000);
-    let currentCategory = 'all';
-    let currentSearch = '';
-    let currentPage = 1;
-    let pageSize = Number(pageSizeSelect.value);
-
-    function showToast(message) {
-      toast.textContent = message;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 1800);
-    }
-
-    function formatPrice(value) {
-      return new Intl.NumberFormat('en-IN', {
-        style: 'currency',
-        currency: 'INR',
-        maximumFractionDigits: 0
-      }).format(value);
-    }
-
-    function getDiscount(price, oldPrice) {
-      return Math.round(((oldPrice - price) / oldPrice) * 100);
-    }
-
-    function capitalize(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-
-    function getFilteredProducts() {
-      let filtered = products;
-
-      if (currentCategory !== 'all') {
-        if (['men', 'women', 'kids'].includes(currentCategory)) {
-          filtered = filtered.filter(product => product.category === currentCategory);
-        } else {
-          filtered = filtered.filter(product => product.type === currentCategory);
-        }
-      }
-
-      if (currentSearch.trim()) {
-        const term = currentSearch.toLowerCase();
-        filtered = filtered.filter(product =>
-          product.name.toLowerCase().includes(term) ||
-          product.brand.toLowerCase().includes(term) ||
-          product.category.toLowerCase().includes(term) ||
-          product.type.toLowerCase().includes(term)
-        );
-      }
-
-      return filtered;
-    }
-
-    function openAffiliate() {
-      window.open("https://amzn.to/4csUkJd", "_blank");
-    }
-
-    function renderPagination(totalPages) {
-      if (totalPages <= 1) {
-        pagination.innerHTML = '';
-        return;
-      }
-
-      const pageButtons = [];
-      const start = Math.max(1, currentPage - 2);
-      const end = Math.min(totalPages, currentPage + 2);
-
-      pageButtons.push(`<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} data-page="prev">Prev</button>`);
-
-      if (start > 1) {
-        pageButtons.push(`<button class="page-btn" data-page="1">1</button>`);
-        if (start > 2) pageButtons.push(`<button class="page-btn" disabled>...</button>`);
-      }
-
-      for (let page = start; page <= end; page++) {
-        pageButtons.push(`<button class="page-btn ${page === currentPage ? 'active' : ''}" data-page="${page}">${page}</button>`);
-      }
-
-      if (end < totalPages) {
-        if (end < totalPages - 1) pageButtons.push(`<button class="page-btn" disabled>...</button>`);
-        pageButtons.push(`<button class="page-btn" data-page="${totalPages}">${totalPages}</button>`);
-      }
-
-      pageButtons.push(`<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} data-page="next">Next</button>`);
-      pagination.innerHTML = pageButtons.join('');
-    }
-
-    function renderProducts() {
-      const filtered = getFilteredProducts();
-      const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-      if (currentPage > totalPages) currentPage = 1;
-
-      const startIndex = (currentPage - 1) * pageSize;
-      const visibleProducts = filtered.slice(startIndex, startIndex + pageSize);
-      const from = filtered.length ? startIndex + 1 : 0;
-      const to = Math.min(startIndex + pageSize, filtered.length);
-
-      resultsText.textContent = filtered.length
-        ? `Showing ${from}-${to} of ${filtered.length.toLocaleString('en-IN')} products`
-        : 'No products found';
-
-      if (!visibleProducts.length) {
-        grid.innerHTML = `
-          <div style="grid-column: 1 / -1; background: white; border: 1px solid var(--border); border-radius: 16px; padding: 28px; text-align: center; color: var(--muted); box-shadow: var(--shadow);">
-            No products found for this search.
-          </div>
-        `;
-        renderPagination(0);
-        return;
-      }
-
-      grid.innerHTML = visibleProducts.map(product => `
-        <div class="card">
-          <div class="card-media">
-            <img src="${product.img}" alt="${product.name}">
-            <span class="tag">${product.tag}</span>
-          </div>
-          <div class="card-body">
-            <div class="brand-line">${product.brand}</div>
-            <div class="card-title">${product.name}</div>
-            <div class="meta">
-              <span>${capitalize(product.category)}</span>
-              <span class="rating">★ ${product.rating}</span>
-            </div>
-            <div class="price-row">
-              <span class="price">${formatPrice(product.price)}</span>
-              <span class="old-price">${formatPrice(product.oldPrice)}</span>
-              <span class="discount">${getDiscount(product.price, product.oldPrice)}% off</span>
-            </div>
-            <button class="add-btn" onclick="openAffiliate()">Buy Now</button>
-          </div>
-        </div>
-      `).join('');
-
-      renderPagination(totalPages);
-    }
-
-    menuFilterLinks.forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        currentCategory = link.dataset.filter;
-        currentPage = 1;
-        renderProducts();
-        document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
-      });
-    });
-
-    searchInput.addEventListener('input', (e) => {
-      currentSearch = e.target.value;
-      currentPage = 1;
-      renderProducts();
-    });
-
-    pageSizeSelect.addEventListener('change', (e) => {
-      pageSize = Number(e.target.value);
-      currentPage = 1;
-      renderProducts();
-    });
-
-    pagination.addEventListener('click', (e) => {
-      const button = e.target.closest('[data-page]');
-      if (!button) return;
-      const target = button.dataset.page;
-      const totalPages = Math.max(1, Math.ceil(getFilteredProducts().length / pageSize));
-
-      if (target === 'prev' && currentPage > 1) currentPage -= 1;
-      else if (target === 'next' && currentPage < totalPages) currentPage += 1;
-      else if (!Number.isNaN(Number(target))) currentPage = Number(target);
-
-      renderProducts();
-      document.getElementById('products').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-
-    heroProductCount.textContent = `${products.length.toLocaleString('en-IN')}+ Products`;
-    renderProducts();
-
-  </script>
-</body>
-</html>
+out = Path('/mnt/data/buyzaar_premium_glass_ui.html')
+out.write_text(html, encoding='utf-8')
+print(f"Saved: {out}")
