@@ -1049,8 +1049,8 @@
       return filtered;
     }
 
-    function quickView(name) {
-      showToast(name + ' opened');
+    function openAffiliate() {
+      window.open("https://amzn.to/4csUkJd", "_blank");
     }
 
     function renderPagination(totalPages) {
@@ -1125,7 +1125,7 @@
               <span class="old-price">${formatPrice(product.oldPrice)}</span>
               <span class="discount">${getDiscount(product.price, product.oldPrice)}% off</span>
             </div>
-            <button class="add-btn" onclick="quickView(this.dataset.name)" data-name="${product.name.replace(/"/g, '&quot;')}">View Product</button>
+            <button class="add-btn" onclick="openAffiliate()">Buy Now</button>
           </div>
         </div>
       `).join('');
