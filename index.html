@@ -1,10 +1,4 @@
-from pathlib import Path
-
-source = Path('/mnt/data/Pasted text(7).txt').read_text(encoding='utf-8')
-script_start = source.index("<script>")
-script_and_after = source[script_start:]
-
-html = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -953,8 +947,354 @@ html = """<!DOCTYPE html>
     <div class="container">© 2026 BUYZAAR — Premium fashion store experience.</div>
   </footer>
 
-""" + script_and_after
+<script>
+    const grid = document.getElementById('productGrid');
+    const menuFilterLinks = document.querySelectorAll('.dropdown a[data-filter]');
+    const searchInput = document.getElementById('searchInput');
+    const toast = document.getElementById('toast');
+    const resultsText = document.getElementById('resultsText');
+    const pagination = document.getElementById('pagination');
+    const pageSizeSelect = document.getElementById('pageSizeSelect');
+    const heroProductCount = document.getElementById('heroProductCount');
 
-out = Path('/mnt/data/buyzaar_premium_glass_ui.html')
-out.write_text(html, encoding='utf-8')
-print(f"Saved: {out}")
+    const catalogConfig = {
+      men: {
+        clothing: {
+          brands: ['Mufti', 'Levi\'s', 'Roadster', 'Jack & Jones', 'U.S. Polo Assn.', 'H&M'],
+          items: ['Casual Shirt', 'Slim Fit Jeans', 'Oversized T-Shirt', 'Bomber Jacket', 'Cotton Hoodie', 'Polo T-Shirt'],
+          tags: ['Best Seller', 'Trending', 'Popular', 'New', 'Budget', 'Daily Wear'],
+          images: [
+            'https://images.unsplash.com/photo-1603252109303-2751441dd157?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1523398002811-999ca8dec234?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=900&q=80'
+          ],
+          price: [799, 3499]
+        },
+        accessories: {
+          brands: ['Tommy Hilfiger', 'Ray-Ban', 'Wildcraft', 'Fossil', 'Mast & Harbour', 'Allen Solly'],
+          items: ['Leather Wallet', 'Classic Sunglasses', 'Travel Backpack', 'Canvas Belt', 'Messenger Bag', 'Cap Set'],
+          tags: ['Premium', 'Travel', 'Popular', 'Value', 'Top Pick', 'New'],
+          images: [
+            'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=900&q=80'
+          ],
+          price: [699, 6499]
+        },
+        fragrances: {
+          brands: ['The Man Company', 'Beardo', 'Denver', 'Villain', 'Park Avenue', 'Ajmal'],
+          items: ['Fresh Perfume', 'Body Spray', 'Oud Fragrance', 'Aqua Cologne', 'Daily Deo', 'Night Scent'],
+          tags: ['Fresh', 'Hot', 'Popular', 'Long Lasting', 'Deal', 'New'],
+          images: [
+            'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1616604847462-8580be8f4dd7?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1615634260167-c8cdede054de?auto=format&fit=crop&w=900&q=80'
+          ],
+          price: [299, 2999]
+        }
+      },
+      women: {
+        clothing: {
+          brands: ['Zara', 'H&M', 'Biba', 'ONLY', 'Vero Moda', 'Global Desi'],
+          items: ['Printed Kurta Set', 'Midi Dress', 'Structured Blazer', 'Ribbed Top', 'Flared Jeans', 'Co-ord Set'],
+          tags: ['Elegant', 'Top Pick', 'Trending', 'Festive', 'Casual', 'New'],
+          images: [
+            'https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1581044777550-4cfa60707c03?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=900&q=80'
+          ],
+          price: [899, 4899]
+        },
+        accessories: {
+          brands: ['Lavie', 'Michael Kors', 'Baggit', 'Caprese', 'Accessorize', 'Aldo'],
+          items: ['Satchel Handbag', 'Tote Bag', 'Statement Earrings', 'Shoulder Bag', 'Sling Purse', 'Watch Strap Set'],
+          tags: ['Premium', 'Daily Use', 'Elegant', 'Popular', 'Style', 'New'],
+          images: [
+            'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1617038220319-276d3cfab638?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80'
+          ],
+          price: [499, 8999]
+        },
+        fragrances: {
+          brands: ['Bella Vita', 'Plum', 'Skinn', 'Engage', 'Yardley', 'Nykaa'],
+          items: ['Floral Mist', 'Rose Perfume', 'Vanilla Body Spray', 'Elegant Fragrance', 'Daily Mist', 'Night Bloom'],
+          tags: ['Fresh', 'Popular', 'Elegant', 'Top Pick', 'Deal', 'New'],
+          images: [
+            'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1616604847462-8580be8f4dd7?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1615634260167-c8cdede054de?auto=format&fit=crop&w=900&q=80'
+          ],
+          price: [349, 2799]
+        }
+      },
+      kids: {
+        clothing: {
+          brands: ['Allen Solly Junior', 'Mini Klub', 'Hopscotch', 'U.S. Polo Assn.', 'Pantaloons Junior', 'Peppermint'],
+          items: ['Checked Shirt', 'Printed Frock', 'Cotton Hoodie', 'Jogger Set', 'Denim Shorts', 'Festive Kurta'],
+          tags: ['Kids', 'Cute', 'New', 'Popular', 'Daily Wear', 'Gift'],
+          images: [
+            'https://images.unsplash.com/photo-1519238359922-989348752efb?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1519238359922-989348752efb?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=900&q=80'
+          ],
+          price: [399, 2299]
+        },
+        accessories: {
+          brands: ['Disney', 'Barbie', 'Hamleys', 'Chicco', 'Babyhug', 'Minnie'],
+          items: ['Hair Accessories Set', 'School Backpack', 'Cute Cap', 'Lunch Bag', 'Kids Watch', 'Play Bag'],
+          tags: ['Cute', 'Gift', 'School', 'Popular', 'New', 'Soft'],
+          images: [
+            'https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?auto=format&fit=crop&w=900&q=80'
+          ],
+          price: [249, 1999]
+        },
+        fragrances: {
+          brands: ['Mamaearth', 'Chicco', 'Baby Dove', 'Johnson\'s', 'Mee Mee', 'The Moms Co.'],
+          items: ['Baby Cologne', 'Fresh Spray', 'Gentle Mist', 'Soft Splash', 'Baby Body Mist', 'Mild Fragrance'],
+          tags: ['Gentle', 'Soft', 'Mild', 'Popular', 'New', 'Daily'],
+          images: [
+            'https://images.unsplash.com/photo-1615634260167-c8cdede054de?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1616604847462-8580be8f4dd7?auto=format&fit=crop&w=900&q=80',
+            'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=900&q=80'
+          ],
+          price: [199, 999]
+        }
+      }
+    };
+
+    const colorWords = ['Black', 'Blue', 'White', 'Olive', 'Grey', 'Maroon', 'Navy', 'Beige', 'Pink', 'Green'];
+    const styleWords = ['Classic', 'Modern', 'Urban', 'Relaxed', 'Signature', 'Premium', 'Smart', 'Everyday', 'Comfort', 'Elite'];
+
+    function createCatalog(total = 6000) {
+      const output = [];
+      let id = 1;
+      const categoryOrder = ['men', 'women', 'kids'];
+      const typeOrder = ['clothing', 'accessories', 'fragrances'];
+
+      while (output.length < total) {
+        categoryOrder.forEach((category, categoryIndex) => {
+          typeOrder.forEach((type, typeIndex) => {
+            if (output.length >= total) return;
+            const config = catalogConfig[category][type];
+            const loopIndex = output.length;
+            const brand = config.brands[loopIndex % config.brands.length];
+            const item = config.items[(loopIndex + typeIndex) % config.items.length];
+            const color = colorWords[(loopIndex + categoryIndex) % colorWords.length];
+            const style = styleWords[(loopIndex + typeIndex + categoryIndex) % styleWords.length];
+            const min = config.price[0];
+            const max = config.price[1];
+            const spread = max - min;
+            const price = min + ((loopIndex * 137) % (spread || 1));
+            const oldPrice = price + Math.max(100, Math.round(price * (0.18 + ((loopIndex % 12) * 0.01))));
+            const rating = (4 + ((loopIndex % 9) * 0.1)).toFixed(1);
+            const subtype = `${category}-${type}`;
+
+            output.push({
+              id: id++,
+              name: `${brand} ${style} ${color} ${item}`,
+              brand,
+              category,
+              type: subtype,
+              price,
+              oldPrice,
+              rating,
+              tag: config.tags[(loopIndex + categoryIndex) % config.tags.length],
+              img: config.images[(loopIndex + typeIndex) % config.images.length]
+            });
+          });
+        });
+      }
+
+      return output.slice(0, total);
+    }
+
+    const products = createCatalog(6000);
+    let currentCategory = 'all';
+    let currentSearch = '';
+    let currentPage = 1;
+    let pageSize = Number(pageSizeSelect.value);
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1800);
+    }
+
+    function formatPrice(value) {
+      return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        maximumFractionDigits: 0
+      }).format(value);
+    }
+
+    function getDiscount(price, oldPrice) {
+      return Math.round(((oldPrice - price) / oldPrice) * 100);
+    }
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    function getFilteredProducts() {
+      let filtered = products;
+
+      if (currentCategory !== 'all') {
+        if (['men', 'women', 'kids'].includes(currentCategory)) {
+          filtered = filtered.filter(product => product.category === currentCategory);
+        } else {
+          filtered = filtered.filter(product => product.type === currentCategory);
+        }
+      }
+
+      if (currentSearch.trim()) {
+        const term = currentSearch.toLowerCase();
+        filtered = filtered.filter(product =>
+          product.name.toLowerCase().includes(term) ||
+          product.brand.toLowerCase().includes(term) ||
+          product.category.toLowerCase().includes(term) ||
+          product.type.toLowerCase().includes(term)
+        );
+      }
+
+      return filtered;
+    }
+
+    function openAffiliate() {
+      window.open("https://amzn.to/4csUkJd", "_blank");
+    }
+
+    function renderPagination(totalPages) {
+      if (totalPages <= 1) {
+        pagination.innerHTML = '';
+        return;
+      }
+
+      const pageButtons = [];
+      const start = Math.max(1, currentPage - 2);
+      const end = Math.min(totalPages, currentPage + 2);
+
+      pageButtons.push(`<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} data-page="prev">Prev</button>`);
+
+      if (start > 1) {
+        pageButtons.push(`<button class="page-btn" data-page="1">1</button>`);
+        if (start > 2) pageButtons.push(`<button class="page-btn" disabled>...</button>`);
+      }
+
+      for (let page = start; page <= end; page++) {
+        pageButtons.push(`<button class="page-btn ${page === currentPage ? 'active' : ''}" data-page="${page}">${page}</button>`);
+      }
+
+      if (end < totalPages) {
+        if (end < totalPages - 1) pageButtons.push(`<button class="page-btn" disabled>...</button>`);
+        pageButtons.push(`<button class="page-btn" data-page="${totalPages}">${totalPages}</button>`);
+      }
+
+      pageButtons.push(`<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} data-page="next">Next</button>`);
+      pagination.innerHTML = pageButtons.join('');
+    }
+
+    function renderProducts() {
+      const filtered = getFilteredProducts();
+      const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+      if (currentPage > totalPages) currentPage = 1;
+
+      const startIndex = (currentPage - 1) * pageSize;
+      const visibleProducts = filtered.slice(startIndex, startIndex + pageSize);
+      const from = filtered.length ? startIndex + 1 : 0;
+      const to = Math.min(startIndex + pageSize, filtered.length);
+
+      resultsText.textContent = filtered.length
+        ? `Showing ${from}-${to} of ${filtered.length.toLocaleString('en-IN')} products`
+        : 'No products found';
+
+      if (!visibleProducts.length) {
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; background: white; border: 1px solid var(--border); border-radius: 16px; padding: 28px; text-align: center; color: var(--muted); box-shadow: var(--shadow);">
+            No products found for this search.
+          </div>
+        `;
+        renderPagination(0);
+        return;
+      }
+
+      grid.innerHTML = visibleProducts.map(product => `
+        <div class="card">
+          <div class="card-media">
+            <img src="${product.img}" alt="${product.name}">
+            <span class="tag">${product.tag}</span>
+          </div>
+          <div class="card-body">
+            <div class="brand-line">${product.brand}</div>
+            <div class="card-title">${product.name}</div>
+            <div class="meta">
+              <span>${capitalize(product.category)}</span>
+              <span class="rating">★ ${product.rating}</span>
+            </div>
+            <div class="price-row">
+              <span class="price">${formatPrice(product.price)}</span>
+              <span class="old-price">${formatPrice(product.oldPrice)}</span>
+              <span class="discount">${getDiscount(product.price, product.oldPrice)}% off</span>
+            </div>
+            <button class="add-btn" onclick="openAffiliate()">Buy Now</button>
+          </div>
+        </div>
+      `).join('');
+
+      renderPagination(totalPages);
+    }
+
+    menuFilterLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        currentCategory = link.dataset.filter;
+        currentPage = 1;
+        renderProducts();
+        document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    searchInput.addEventListener('input', (e) => {
+      currentSearch = e.target.value;
+      currentPage = 1;
+      renderProducts();
+    });
+
+    pageSizeSelect.addEventListener('change', (e) => {
+      pageSize = Number(e.target.value);
+      currentPage = 1;
+      renderProducts();
+    });
+
+    pagination.addEventListener('click', (e) => {
+      const button = e.target.closest('[data-page]');
+      if (!button) return;
+      const target = button.dataset.page;
+      const totalPages = Math.max(1, Math.ceil(getFilteredProducts().length / pageSize));
+
+      if (target === 'prev' && currentPage > 1) currentPage -= 1;
+      else if (target === 'next' && currentPage < totalPages) currentPage += 1;
+      else if (!Number.isNaN(Number(target))) currentPage = Number(target);
+
+      renderProducts();
+      document.getElementById('products').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    heroProductCount.textContent = `${products.length.toLocaleString('en-IN')}+ Products`;
+    renderProducts();
+
+  </script>
+</body>
+</html>
